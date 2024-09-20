@@ -9,4 +9,12 @@ import './mockEnv.ts';
 import '@telegram-apps/telegram-ui/dist/styles.css';
 import './index.css';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(<Root/>);
+window.open = (function (open) {
+    return function (url, _, features) {
+        return open.call(window, url, "_blank", features);
+    };
+})(window.open);
+
+
+
+ReactDOM.createRoot(document.getElementById('root')!).render(<Root />);

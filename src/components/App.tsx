@@ -18,6 +18,26 @@ import {
 } from 'react-router-dom';
 
 import { routes } from '@/navigation/routes.tsx';
+import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
+
+import '@rainbow-me/rainbowkit/styles.css';
+
+import {
+  getDefaultConfig,
+  RainbowKitProvider,
+} from '@rainbow-me/rainbowkit';
+import { WagmiProvider } from 'wagmi';
+import {
+  mainnet,
+  polygon,
+  optimism,
+  arbitrum,
+  base,
+} from 'wagmi/chains';
+import {
+  QueryClientProvider,
+  QueryClient,
+} from "@tanstack/react-query";
 
 export const App: FC = () => {
   const lp = useLaunchParams();
@@ -49,17 +69,41 @@ export const App: FC = () => {
     return () => navigator.detach();
   }, [navigator]);
 
+
+
+
+  const config = getDefaultConfig({
+    appName: 'My RainbowKit App',
+    projectId: 'YOUR_PROJECT_ID',
+    chains: [mainnet, polygon, optimism, arbitrum, base],
+    ssr: true, // If your dApp uses server side rendering (SSR)
+    wallets: [{
+      groupName: 'MetaMask',
+      wallets: [metaMaskWallet],
+    }],
+
+  });
+  const queryClient = new QueryClient();
+
   return (
-    <AppRoot
-      appearance={miniApp.isDark ? 'dark' : 'light'}
-      platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
-    >
-      <Router location={location} navigator={reactNavigator}>
-        <Routes>
-          {routes.map((route) => <Route key={route.path} {...route} />)}
-          <Route path='*' element={<Navigate to='/'/>}/>
-        </Routes>
-      </Router>
-    </AppRoot>
+
+
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider>
+          <AppRoot
+            appearance={miniApp.isDark ? 'dark' : 'light'}
+            platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
+          >
+            <Router location={location} navigator={reactNavigator}>
+              <Routes>
+                {routes.map((route) => <Route key={route.path} {...route} />)}
+                <Route path='*' element={<Navigate to='/' />} />
+              </Routes>
+            </Router>
+          </AppRoot>
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 };
