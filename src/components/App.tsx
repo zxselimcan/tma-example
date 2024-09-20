@@ -18,7 +18,6 @@ import {
 } from 'react-router-dom';
 
 import { routes } from '@/navigation/routes.tsx';
-import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets';
 
 import '@rainbow-me/rainbowkit/styles.css';
 
@@ -33,6 +32,7 @@ import {
   optimism,
   arbitrum,
   base,
+  bsc,
 } from 'wagmi/chains';
 import {
   QueryClientProvider,
@@ -75,7 +75,7 @@ export const App: FC = () => {
   const config = getDefaultConfig({
     appName: 'My RainbowKit App',
     projectId: 'YOUR_PROJECT_ID',
-    chains: [mainnet, polygon, optimism, arbitrum, base],
+    chains: [mainnet, polygon, optimism, arbitrum, base, bsc],
     ssr: false, // If your dApp uses server side rendering (SSR)
   });
   const queryClient = new QueryClient();
