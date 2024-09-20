@@ -73,8 +73,8 @@ export const App: FC = () => {
 
 
   const config = getDefaultConfig({
-    appName: 'My RainbowKit App',
-    projectId: 'YOUR_PROJECT_ID',
+    appName: 'Test telegram app',
+    projectId: 'f04b5d42a0b5cfd870c4de621991d743',
     chains: [mainnet, polygon, optimism, arbitrum, base, bsc],
     ssr: false, // If your dApp uses server side rendering (SSR)
   });
