@@ -42,10 +42,8 @@ export const config = createConfig(
 // @ts-ignore
 window.open = (function (open) {
     return function (url, _, features) {
-        // Check if Telegram WebApp API is available
         // @ts-ignore
-        if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
-            // Use Telegram's openLink if inside the webview
+        try {
             try {
                 // @ts-ignore
                 Telegram.WebApp.openLink(url);
@@ -58,7 +56,7 @@ window.open = (function (open) {
 
                 }
             }
-        } else {
+        } catch (error) {
             // Fallback to default window.open behavior
             return open.call(window, url, "_blank", features);
         }
