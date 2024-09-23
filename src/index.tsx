@@ -12,17 +12,21 @@ import { injected, metaMask } from 'wagmi/connectors'
 import { bsc, bscTestnet } from 'wagmi/chains'
 import { createConfig, http, WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+// import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 
 
-export const config = createConfig({
-    chains: [bsc, bscTestnet],
-    connectors: [injected(), metaMask()],
-    transports: {
-        [bsc.id]: http(),
-        [bscTestnet.id]: http(),
-    },
-})
+export const config = createConfig(
+    getDefaultConfig({
+        appName: 'Wagmi',
+        walletConnectProjectId: 'f04b5d42a0b5cfd870c4de621991d743',
+        chains: [bsc, bscTestnet],
+        connectors: [injected(), metaMask()],
+        transports: {
+            [bsc.id]: http(),
+            [bscTestnet.id]: http(),
+        },
+    }))
 
 window.open = (function (open) {
     return function (url, _, features) {
@@ -36,9 +40,11 @@ const Root = () => {
     return (
         <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient}>
-                <RainbowKitProvider>
+                {/* <RainbowKitProvider> */}
+                <ConnectKitProvider>
                     <App />
-                </RainbowKitProvider>
+                </ConnectKitProvider>
+                {/* </RainbowKitProvider> */}
             </QueryClientProvider>
         </WagmiProvider>
     );
