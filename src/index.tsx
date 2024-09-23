@@ -38,6 +38,34 @@ export const config = createConfig(
 //     };
 // })(window.open);
 
+
+// @ts-ignore
+window.open = (function (open) {
+    return function (url, _, features) {
+        // Check if Telegram WebApp API is available
+        // @ts-ignore
+        if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+            // Use Telegram's openLink if inside the webview
+            try {
+                // @ts-ignore
+                Telegram.WebApp.openLink(url);
+            } catch (error) {
+                try {
+                    // @ts-ignore
+                    window.Telegram.WebApp.openLink(url);
+
+                } catch (error) {
+
+                }
+            }
+        } else {
+            // Fallback to default window.open behavior
+            return open.call(window, url, "_blank", features);
+        }
+    };
+})(window?.open);
+
+
 const queryClient = new QueryClient();
 
 const Root = () => {
