@@ -43,6 +43,9 @@ const App = () => {
                 ))
             }
 
+
+            customcustom
+            <a href="https://metamask.app.link/dapp/zxselimcan.github.io/tma-example/" target="_blank" rel="noreferrer">Metamask Custom</a>
         </div>
     )
 }
