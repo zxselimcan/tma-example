@@ -1,12 +1,15 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-const MetamaskConnectPage = () => {
+
+const App = () => {
     return (
         <div>
-            metamask page
+            metamask connect
             <ConnectButton />;
+            <hr />
+
         </div>
     )
 }
 
-export default MetamaskConnectPage;
+export default App;
