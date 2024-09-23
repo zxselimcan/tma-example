@@ -39,29 +39,25 @@ export const config = createConfig(
 // })(window.open);
 
 
-// @ts-ignore
 window.open = (function (open) {
     return function (url, _, features) {
-        // @ts-ignore
-        try {
-            try {
-                // @ts-ignore
-                Telegram.WebApp.openLink(url);
-            } catch (error) {
-                try {
-                    // @ts-ignore
-                    window.Telegram.WebApp.openLink(url);
+        // Only call window.open during user interaction
+        // Use navigator.userAgent to detect mobile environments
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const metamaskDeepLink = "https://metamask.app.link/dapp/" + window.location.hostname;
 
-                } catch (error) {
-
-                }
-            }
-        } catch (error) {
-            // Fallback to default window.open behavior
+        if (isMobile) {
+            alert("isMobile");
+            // If it's a mobile device, open the MetaMask mobile app via deep link
+            url = metamaskDeepLink;
+            // Open MetaMask mobile app deep link
+            return open.call(window, url, "_blank", features);
+        } else {
+            // For desktop or regular web browser, just open the normal URL
             return open.call(window, url, "_blank", features);
         }
     };
-})(window?.open);
+})(window.open);
 
 
 const queryClient = new QueryClient();
