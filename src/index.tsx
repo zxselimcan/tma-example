@@ -8,7 +8,7 @@ import App from '@/pages/App';
 
 import '@telegram-apps/telegram-ui/dist/styles.css';
 import './index.css';
-import { injected, metaMask } from 'wagmi/connectors'
+import { injected, metaMask, walletConnect, } from 'wagmi/connectors'
 import { bsc, bscTestnet } from 'wagmi/chains'
 import { createConfig, http, WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -21,18 +21,22 @@ export const config = createConfig(
         appName: 'Wagmi',
         walletConnectProjectId: 'f04b5d42a0b5cfd870c4de621991d743',
         chains: [bsc, bscTestnet],
-        connectors: [injected(), metaMask()],
+        connectors: [injected(), metaMask(), walletConnect({
+            projectId: 'f04b5d42a0b5cfd870c4de621991d743',
+        })],
         transports: {
             [bsc.id]: http(),
             [bscTestnet.id]: http(),
         },
+        multiInjectedProviderDiscovery: true,
+        ssr: false,
     }))
 
-window.open = (function (open) {
-    return function (url, _, features) {
-        return open.call(window, url, "_blank", features);
-    };
-})(window.open);
+// window.open = (function (open) {
+//     return function (url, _, features) {
+//         return open.call(window, url, "_blank", features);
+//     };
+// })(window.open);
 
 const queryClient = new QueryClient();
 
@@ -41,7 +45,9 @@ const Root = () => {
         <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient}>
                 {/* <RainbowKitProvider> */}
-                <ConnectKitProvider>
+                <ConnectKitProvider
+                    debugMode={true}
+                >
                     <App />
                 </ConnectKitProvider>
                 {/* </RainbowKitProvider> */}
