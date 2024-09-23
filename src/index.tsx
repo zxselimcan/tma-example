@@ -13,6 +13,7 @@ import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
 import { WagmiProvider } from 'wagmi'
 import { arbitrum, mainnet } from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+// import the builder util
 
 // 0. Setup queryClient
 const queryClient = new QueryClient()
@@ -28,12 +29,20 @@ const metadata = {
     icons: ['https://assets.reown.com/reown-profile-pic.png']
 }
 
+
+
+
 const chains = [mainnet, arbitrum] as const
 const config = defaultWagmiConfig({
     chains,
     projectId,
     metadata,
     //   ...wagmiOptions // Optional - Override createConfig parameters
+    auth: {
+        email: false,
+        socials: [],
+        showWallets: true,
+    }
 })
 
 // 3. Create modal
