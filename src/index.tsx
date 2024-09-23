@@ -6,75 +6,65 @@ import App from '@/pages/App';
 // the Telegram application, just in your browser.
 // import './mockEnv.ts';
 
-import '@telegram-apps/telegram-ui/dist/styles.css';
-import './index.css';
-import { injected, metaMask, walletConnect, } from 'wagmi/connectors'
-import { bsc, bscTestnet } from 'wagmi/chains'
-import { createConfig, http, WagmiProvider } from 'wagmi';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-// import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 
+import { createWeb3Modal } from '@web3modal/wagmi/react'
+import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
 
-export const config = createConfig(
-    getDefaultConfig({
-        appName: 'Wagmi',
-        walletConnectProjectId: 'f04b5d42a0b5cfd870c4de621991d743',
-        chains: [bsc, bscTestnet],
-        connectors: [injected(), metaMask(), walletConnect({
-            projectId: 'f04b5d42a0b5cfd870c4de621991d743',
-        })],
-        transports: {
-            [bsc.id]: http(),
-            [bscTestnet.id]: http(),
-        },
-        multiInjectedProviderDiscovery: true,
-        ssr: false,
-    }))
+import { WagmiProvider } from 'wagmi'
+import { arbitrum, mainnet } from 'wagmi/chains'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-// window.open = (function (open) {
-//     return function (url, _, features) {
-//         return open.call(window, url, "_blank", features);
-//     };
-// })(window.open);
+// 0. Setup queryClient
+const queryClient = new QueryClient()
 
+// 1. Your Reown Cloud project ID
+const projectId = 'd99dbd10562e3ca62a197a45d3494c0f'
+
+// 2. Create wagmiConfig
+const metadata = {
+    name: 'deneme',
+    description: 'AppKit Example',
+    url: 'https://zxselimcan.github.io/tma-example/', // origin must match your domain & subdomain
+    icons: ['https://assets.reown.com/reown-profile-pic.png']
+}
+
+const chains = [mainnet, arbitrum] as const
+const config = defaultWagmiConfig({
+    chains,
+    projectId,
+    metadata,
+    //   ...wagmiOptions // Optional - Override createConfig parameters
+})
+
+// 3. Create modal
+createWeb3Modal({
+    wagmiConfig: config,
+    projectId,
+    enableAnalytics: true, // Optional - defaults to your Cloud configuration
+    enableOnramp: true, // Optional - false as defaultü
+
+})
+
+export function Web3ModalProvider({ children }: { children: React.ReactNode }) {
+    return (
+        <WagmiProvider config={config}>
+            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        </WagmiProvider>
+    )
+}
 
 window.open = (function (open) {
     return function (url, _, features) {
-        // Only call window.open during user interaction
-        // Use navigator.userAgent to detect mobile environments
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        const metamaskDeepLink = "https://metamask.app.link/dapp/" + window.location.hostname;
-
-        if (isMobile) {
-            alert("isMobile");
-            // If it's a mobile device, open the MetaMask mobile app via deep link
-            url = metamaskDeepLink;
-            // Open MetaMask mobile app deep link
-            return open.call(window, url, "_blank", features);
-        } else {
-            // For desktop or regular web browser, just open the normal URL
-            return open.call(window, url, "_blank", features);
-        }
+        return open.call(window, url, "_blank", features);
     };
 })(window.open);
 
-
-const queryClient = new QueryClient();
-
 const Root = () => {
     return (
-        <WagmiProvider config={config}>
-            <QueryClientProvider client={queryClient}>
-                {/* <RainbowKitProvider> */}
-                <ConnectKitProvider
-                    debugMode={true}
-                >
-                    <App />
-                </ConnectKitProvider>
-                {/* </RainbowKitProvider> */}
-            </QueryClientProvider>
-        </WagmiProvider>
+        <Web3ModalProvider>
+            <App />
+        </Web3ModalProvider>
+
     );
 }
 
